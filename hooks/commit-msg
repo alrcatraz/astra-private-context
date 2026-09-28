@@ -1,0 +1,14 @@
+#!/bin/sh
+# Conventional Commits gate — astra-vcs-assist v1.4.0 convention.
+# Allowed: <type>[optional scope][!]: <subject>
+# types: feat fix refactor docs chore ci test perf build style revert wip
+msg_file="$1"
+first_line=$(head -n1 "$msg_file")
+if echo "$first_line" | grep -Eq '^Merge |^Revert '; then exit 0; fi
+if ! echo "$first_line" | grep -Eq '^[a-z]+(\([a-zA-Z0-9_-]+\))?!?: .+'; then
+    echo "commit-msg: REJECTED — not Conventional Commits format." >&2
+    echo "  expected: <type>(<scope>): <subject>   e.g. feat: add suffix config" >&2
+    echo "  got:      $first_line" >&2
+    exit 1
+fi
+exit 0
