@@ -1,0 +1,7 @@
+name: astra-private-context
+version: 1.0.0
+description: "Inject gitignored private policy files (<Base>.<suffix>.md, default AGENTS.local.md / CLAUDE.local.md) alongside the public AGENTS.md via pre_llm_call; optional always-on global redline file for headless sessions."
+author: alrcatraz (Hermes fleet)
+provides_tools: []
+provides_hooks:
+  - pre_llm_call
