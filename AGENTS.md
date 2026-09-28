@@ -19,9 +19,12 @@ Hermes' own importable surface (`agent.runtime_cwd`, `hermes_cli.config`).
 ## Conventions
 
 - Language: repo is English-first (public-facing). Comments explain WHY, not WHAT.
-- Commits: Conventional Commits, GPG-signed with the repo-local identity.
-- Versioning: plain SemVer tags (`v1.0.0`) on `main`. Plugin version lives in
-  `plugin.yaml`; keep both in sync at tag time.
+- Commits: Conventional Commits, GPG-signed with the repo-local identity. The
+  `hooks/commit-msg` gate enforces the format — activate after any clone with:
+  `git config core.hooksPath hooks`
+- Branch model: `feat/* → development → main (PR only)`, dual-publish Gitea then
+  GitHub, tags on `main`. Plain SemVer (`v1.0.0`) — small standalone plugin,
+  not a three-layer versioned blueprint component.
 - **Never commit private policy content.** Files matching `*.<suffix>.md`
   (default `.local.md`) are gitignored by design — adding them to git breaks
   the project's core promise. Test fixtures must use throwaway paths under a
