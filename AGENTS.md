@@ -22,9 +22,9 @@ Hermes' own importable surface (`agent.runtime_cwd`, `hermes_cli.config`).
 - Commits: Conventional Commits, GPG-signed with the repo-local identity. The
   `hooks/commit-msg` gate enforces the format — activate after any clone with:
   `git config core.hooksPath hooks`
-- Branch model: `feat/* → development → main (PR only)`, dual-publish Gitea then
-  GitHub, tags on `main`. Plain SemVer (`v1.0.0`) — small standalone plugin,
-  not a three-layer versioned blueprint component.
+- Branch model: `feat/* → development → main (PR only)`, tags on `main`.
+  Plain SemVer (`v1.0.0`) — small standalone plugin, not a three-layer
+  versioned blueprint component.
 - **Never commit private policy content.** Files matching `*.<suffix>.md`
   (default `.local.md`) are gitignored by design — adding them to git breaks
   the project's core promise. Test fixtures must use throwaway paths under a
@@ -32,6 +32,9 @@ Hermes' own importable surface (`agent.runtime_cwd`, `hermes_cli.config`).
 - Privacy contract before any change: this repo may be public. Do not put real
   hostnames, internal URLs, credentials, or fleet topology into ANY tracked
   file, including tests and examples. Use obviously-fake placeholders.
+- This repo declares **L2 = L3** (single public track): the same content ships
+  to both remotes — no sanitisation or projection stage. Details of the
+  remotes themselves live in `AGENTS.local.md`.
 
 ## Testing
 
@@ -39,12 +42,12 @@ The plugin is hook-pure: verify without a live session by driving the hook
 pipeline directly from the Hermes source tree:
 
 ```python
-import os; os.environ["HERMES_HOME"] = os.path.expanduser("~/.hermes")
+import os; os.environ["HERMES_HOME"] = os.environ.get("HERMES_HOME", "~/.hermes")
 import model_tools                      # triggers plugin discovery
 from hermes_cli.plugins import discover_plugins; discover_plugins()
 from agent.runtime_cwd import set_session_cwd, reset_session_cwd
 from hermes_cli.lifecycle import invoke_hook
-tok = set_session_cwd("/tmp/some-repo")
+tok = set_session_cwd("<repo-under-test>")
 try:
     results = invoke_hook("pre_llm_call", session_id="t", task_id="t", turn_id="t1",
         user_message="x", conversation_history=[], is_first_turn=True,
@@ -60,6 +63,9 @@ when no private files exist, and other plugins' hooks unaffected.
 ## Deploying locally
 
 ```bash
-cp __init__.py plugin.yaml ~/.hermes/plugins/astra-private-context/
+cp __init__.py plugin.yaml <hermes-plugins-dir>/astra-private-context/
 hermes plugins enable astra-private-context   # gateway hot-reloads hooks
 ```
+
+The fleet-specific path and release layout are in `AGENTS.local.md`
+(gitignored, injected by this very plugin when working in this repo).
